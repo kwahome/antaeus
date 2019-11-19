@@ -1,6 +1,6 @@
 package io.pleo.antaeus.core.infrastructure.messaging.activemq.connection
 
-import io.pleo.antaeus.core.infrastructure.messaging.activemq.BrokerConfig
+import io.pleo.antaeus.core.infrastructure.messaging.activemq.config.BrokerConfig
 import javax.jms.ConnectionFactory
 import org.apache.activemq.ActiveMQConnectionFactory
 
@@ -14,9 +14,9 @@ object ConnectionFactory {
      */
     fun getConnectionFactory(): ConnectionFactory {
         return ActiveMQConnectionFactory(
-                BrokerConfig.brokerUsername,
-                BrokerConfig.brokerPassword,
-                BrokerConfig.brokerUrl
+                BrokerConfig.BROKER_USERNAME,
+                BrokerConfig.BROKER_PASSWORD,
+                BrokerConfig.BROKER_URL
         )
     }
 }

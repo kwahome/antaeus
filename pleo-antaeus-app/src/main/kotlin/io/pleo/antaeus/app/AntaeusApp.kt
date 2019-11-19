@@ -44,10 +44,10 @@ fun main() {
     // Connect to the database and create the needed tables. Drop any existing data.
     val db = Database
         .connect(
-                AppConfiguration.databaseUrl,
-                AppConfiguration.databaseDriver,
-                AppConfiguration.databaseUser,
-                AppConfiguration.databasePassword
+                AppConfiguration.DATABASE_URL,
+                AppConfiguration.DATABASE_DRIVER,
+                AppConfiguration.DATABASE_USER,
+                AppConfiguration.DATABASE_PASSWORD
         )
         .also {
             TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
@@ -81,22 +81,22 @@ fun main() {
 
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(
-            destinationQueue = AppConfiguration.invoiceBillingQueue,
-            billingSchedulingJobCron = AppConfiguration.billingSchedulingJobCron,
+            destinationQueue = AppConfiguration.INVOICE_BILLING_QUEUE,
+            billingSchedulingJobCron = AppConfiguration.BILLING_SCHEDULING_JOB_CRON,
             invoiceService = invoiceService,
             customerService = customerService,
             taskScheduler = billingTaskScheduler,
-            globalBillingSchedule = Schedule(AppConfiguration.defaultTaskDelayCron)
+            globalBillingSchedule = Schedule(AppConfiguration.DEFAULT_TASK_DELAY_CRON)
     )
 
     billingService.scheduleBilling()
 
     // sanitize concurrency against invalid inputs
-    val concurrency = max(1, AppConfiguration.billingWorkerConcurrency)
+    val concurrency = max(1, AppConfiguration.BILLING_WORKER_CONCURRENCY)
 
     // Start invoice billing workers
     for (count in 1..concurrency) {
-        logger.info { "Starting ${AppConfiguration.billingWorkerConcurrency} invoice billing workers" }
+        logger.info { "Starting ${InvoiceBillingWorker::class.simpleName}-$count" }
         Thread {
             InvoiceBillingWorker(
                     customerService = customerService,

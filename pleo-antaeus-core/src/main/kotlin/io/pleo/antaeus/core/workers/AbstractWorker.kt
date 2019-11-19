@@ -1,7 +1,7 @@
 package io.pleo.antaeus.core.workers
 
 import io.pleo.antaeus.core.infrastructure.dto.AbstractWorkerTaskDTO
-import io.pleo.antaeus.core.infrastructure.messaging.jms.MessagingMessageListener
+import io.pleo.antaeus.core.infrastructure.messaging.activemq.MessagingMessageListener
 import io.pleo.antaeus.core.infrastructure.util.json.JsonSerializationHelper
 import io.pleo.antaeus.core.infrastructure.util.json.exceptions.JsonSerializationException
 import java.lang.Exception

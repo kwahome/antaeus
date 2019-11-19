@@ -1,4 +1,4 @@
-package io.pleo.antaeus.core.infrastructure.messaging.jms
+package io.pleo.antaeus.core.infrastructure.messaging.activemq
 
 import io.pleo.antaeus.core.infrastructure.messaging.activemq.connection.ConnectionFactory
 import javax.jms.JMSException
