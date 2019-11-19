@@ -89,8 +89,6 @@ fun main() {
             globalBillingSchedule = Schedule(AppConfiguration.DEFAULT_TASK_DELAY_CRON)
     )
 
-    billingService.scheduleBilling()
-
     // sanitize concurrency against invalid inputs
     val concurrency = max(1, AppConfiguration.BILLING_WORKER_CONCURRENCY)
 
@@ -108,6 +106,9 @@ fun main() {
         }.start()
         logger.info { "${InvoiceBillingWorker::class.simpleName}-$count started" }
     }
+
+    // fire billing scheduling job
+    billingService.scheduleBilling()
 
     // Create REST web service
     AntaeusRest(

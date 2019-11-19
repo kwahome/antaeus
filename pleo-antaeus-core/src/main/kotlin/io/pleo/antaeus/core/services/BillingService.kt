@@ -38,6 +38,8 @@ class BillingService(
         private val taskScheduler: TaskScheduler,
         private val globalBillingSchedule: Schedule
 ) {
+    private val logger = KotlinLogging.logger {}
+
     private val triggerName = "billingSchedulingTrigger"
     private val jobName = "billingSchedulingJob"
 
@@ -72,6 +74,7 @@ class BillingService(
 
     fun scheduleBilling(): Boolean {
         try {
+            logger.info { "Starting billing scheduling job" }
             when {
                 !cronJobScheduler.isStarted -> {
                     cronJobScheduler.scheduleJob(cronJob, cronJobTrigger)
@@ -82,6 +85,7 @@ class BillingService(
             return true
         }
         catch (e: Exception) {
+            logger.error(e) { "An exception with message='${e.message}' has occurred" }
             throw e
         }
     }
