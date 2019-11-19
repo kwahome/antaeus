@@ -271,6 +271,9 @@ domain hence can be reused in another problem domain
 **Cons:**
 - Less infrastructure dependencies to maintain
 - A bit more complex than solution 1
+- ActiveMQ does not scale well horizontally. This can however be overcome by deploying a fleet of brokers. Moreover, 
+the infrastructure components should be isolated from the scheduling logic which should only rely on an interface 
+allowing easy switching out of providers.
 
 ### 4. Next steps
 - Implement time-based delay queue invoice billing

@@ -25,6 +25,7 @@ import io.pleo.antaeus.models.Schedule
 import io.pleo.antaeus.rest.AntaeusRest
 import java.sql.Connection
 import java.time.Clock
+import kotlin.math.max
 import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -90,8 +91,11 @@ fun main() {
 
     billingService.scheduleBilling()
 
+    // sanitize concurrency against invalid inputs
+    val concurrency = max(1, AppConfiguration.billingWorkerConcurrency)
+
     // Start invoice billing workers
-    for (concurrency in 1..AppConfiguration.billingWorkerConcurrency) {
+    for (count in 1..concurrency) {
         logger.info { "Starting ${AppConfiguration.billingWorkerConcurrency} invoice billing workers" }
         Thread {
             InvoiceBillingWorker(
@@ -102,6 +106,7 @@ fun main() {
                     currencyConversionProvider = currencyConversionProvider
             ).listen()
         }.start()
+        logger.info { "${InvoiceBillingWorker::class.simpleName}-$count started" }
     }
 
     // Create REST web service
