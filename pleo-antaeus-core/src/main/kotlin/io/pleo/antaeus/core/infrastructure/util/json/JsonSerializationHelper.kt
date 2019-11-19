@@ -1,5 +1,6 @@
 package io.pleo.antaeus.core.infrastructure.util.json
 
+import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -65,7 +66,7 @@ object JsonSerializationHelper {
 
         val objectMapper = ObjectMapper()
         objectMapper.registerModule(javaTimeModule)
-//        objectMapper.registerModules(modules)
+        objectMapper.registerModules(*modules)
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         return objectMapper
     }
