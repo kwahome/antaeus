@@ -198,6 +198,10 @@ objects such a `Invoice`, `Customer` etc.
 It allow more granular optimization and control over each tier. Currently, they both run in the same container. 
 Splitting them out helps with fine grained scaling by adding more resources only where they are needed.
 
+- Apply hexagonal architecture (ports and adapters) to further isolate concerns. I have made attempts to isolate
+infrastructure concerns from core logic (e.g. messaging is isolated from the scheduling logic which relies on an
+interface contract allowing easy switching out of providers) but this could be improved with ports and adapters.
+
 - Enhanced logging through the use of a context building library such as MDC that allows rendering in different
 formats such as JSON, KV. For now, things have been kept simple with string formatted log lines. Moreover, adding
 metrics instrumentation and error reporting would enhance observability.
@@ -356,5 +360,8 @@ The code given is structured as follows. Feel free however to modify the structu
 * [JUnit 5](https://junit.org/junit5/) - Testing framework
 * [Mockk](https://mockk.io/) - Mocking library
 * [Sqlite3](https://sqlite.org/index.html) - Database storage engine
+* [ActiveMQ](https://activemq.apache.org/) - MOM providing delayed scheduling
+* [jackson](https://github.com/FasterXML/jackson) - Data (JSON) processing tools for Java (jvm)
+* [Quartz Scheduler](http://www.quartz-scheduler.org) - Cron parsing engine
 
 Happy hacking 😁!
