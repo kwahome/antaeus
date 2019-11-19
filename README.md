@@ -1,12 +1,19 @@
 ## Antaeus
 
-Antaeus (/ænˈtiːəs/), in Greek mythology, a giant of Libya, the son of the sea god Poseidon and the Earth goddess Gaia. He compelled all strangers who were passing through the country to wrestle with him. Whenever Antaeus touched the Earth (his mother), his strength was renewed, so that even if thrown to the ground, he was invincible. Heracles, in combat with him, discovered the source of his strength and, lifting him up from Earth, crushed him to death.
+Antaeus (/ænˈtiːəs/), in Greek mythology, a giant of Libya, the son of the sea god Poseidon and the Earth goddess Gaia. 
+He compelled all strangers who were passing through the country to wrestle with him. 
+Whenever Antaeus touched the Earth (his mother), his strength was renewed, so that even if thrown to the ground, he was 
+invincible. Heracles, in combat with him, discovered the source of his strength and, lifting him up from Earth, crushed 
+him to death.
 
 Welcome to our challenge.
 
 ## The challenge
 
-As most "Software as a Service" (SaaS) companies, Pleo needs to charge a subscription fee every month. Our database contains a few invoices for the different markets in which we operate. Your task is to build the logic that will schedule payment of those invoices on the first of the month. While this may seem simple, there is space for some decisions to be taken and you will be expected to justify them.
+As most "Software as a Service" (SaaS) companies, Pleo needs to charge a subscription fee every month. 
+Our database contains a few invoices for the different markets in which we operate. 
+Your task is to build the logic that will schedule payment of those invoices on the first of the month. 
+While this may seem simple, there is space for some decisions to be taken and you will be expected to justify them.
 
 ## The solution
 
@@ -25,23 +32,23 @@ The RFC establishes a criteria, derived from desired properties, in weighing com
 
 > - be horizontally scalable (distributable - ability to run on different machines
 > - guarantee at most once delivery - we only want to charge an invoice once
-> - guarantee durability and recoverability - we want the schedules to persist even after the application or its host are 
-restarted
+> - guarantee durability and recoverability - we want the schedules to persist even after the application or its host 
+> are restarted
 > - be dynamically configurable with granularity and little code changes - we want control (preferably user input driven) 
 to change when and how billing is scheduled e.g. we may want to bill every day or every week e.t.c. Level of granularity
 is also rather important e.g. a customer may prefer to pay on a daily basis while another prefers monthly
 > - perform pre-execution checks - for extra precaution, we want to determine whether to proceed with the call to the 
 payment provider based on predetermined rules e.g. `Invoice.Status` not being `PAID`. Configurability here is also
 a consideration.
-> - support rescheduling - since failure is a reality in the world of systems, we want the ability to safely retry without
-any unwanted side effects
+> - support rescheduling - since failure is a reality in the world of systems, we want the ability to safely retry 
+>without any unwanted side effects
 > - be extensible - we want the solution to be easily extended to fit future requirements
-> - be efficient and performant - as we work hard to grow the business, so does the number of customers and invoices to be
-billed; scale. The solution should withstand increase in scale with a low resource footprint so as not to starve the
-application
+> - be efficient and performant - as we work hard to grow the business, so does the number of customers and invoices to 
+> be billed; scale. The solution should withstand increase in scale with a low resource footprint so as not to starve 
+> the application
 > - be observable - we want the ability to peek into it and understand it's working for easy troubleshooting
 
-From this process, `Solution 2: Time-based delay queue scheduling` is determined to be most appropriate.
+From this analytical process, `Solution 2: Time-based delay queue scheduling` is determined to be most appropriate.
 
 ### 2. Design
 The favoured solution proposes use of a delay and schedule feature of ActiveMQ to schedule invoice billing for execution
@@ -283,12 +290,6 @@ solution
 - 10 hrs: Implementing the design in code, unit tests, other kind of testing that's not necessarily automated
 - 2 hr: Documentation of work done, polishing up code
 
-## Instructions
-
-Fork this repo with your solution. Ideally, we'd like to see your progression through commits, and don't forget to update the README.md to explain your thought process.
-
-Please let us know how long the challenge takes you. We're not looking for how speedy or lengthy you are. It's just really to give us a clearer idea of what you've produced in the time you decided to take. Feel free to go as big or as small as you want.
-
 ## Developing
 
 Requirements:
@@ -302,8 +303,9 @@ Requirements:
 
 ### Running
 
-There are 2 options for running Anteus. You either need libsqlite3 or docker. Docker is easier but requires some docker knowledge. We do recommend docker though.
-
+There are 2 options for running Anteus. 
+You either need libsqlite3 or docker. 
+Docker is easier but requires some docker knowledge. We do recommend docker though.
 
 *Running through docker*
 
@@ -313,13 +315,13 @@ Install docker for your platform
 make docker-run
 ```
 
-`docker-compose.yml` defines services and dependencies required to run the application. Use:
+`docker-compose.yml` defines services and dependencies required to run the application. 
+
+To compose the application, use:
 
 ```
 docker-compose up
 ```
-
-to start it
 
 *Running Natively*
 
