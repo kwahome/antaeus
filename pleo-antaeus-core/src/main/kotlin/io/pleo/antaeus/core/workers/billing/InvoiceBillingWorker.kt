@@ -32,7 +32,7 @@ class InvoiceBillingWorker(
         val invoice = this.fetchInvoice(invoiceId) ?: return
         try {
             if (!this.preExecutionChecks(invoice)) return
-            logger.info {"Attempting to charge invoice='${invoiceId}' for customer='${invoice.customerId}"}
+            logger.info {"Attempting to charge invoice='${invoiceId}' for customer='${invoice.customerId}'"}
             val response = this.paymentProvider.charge(invoice)
             this.handleResponse(invoice, response)
         } catch (ex: InvoiceNotFoundException) {

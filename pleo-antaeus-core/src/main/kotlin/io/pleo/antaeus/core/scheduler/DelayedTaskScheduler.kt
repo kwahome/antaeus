@@ -25,8 +25,8 @@ import java.time.Instant
  * with precision of local times. For instance, if we have customers in
  * a GMT+0300 timezone and the desired billing time is the first of every
  * month e.g. 1 January 00:00:00, we want to delay this billing task in
- * such a way that that local time is achieved despite having servers
- * running the task elsewhere.
+ * such a way that that local time is achieved despite the servers
+ * running the task being in a different timezone.
  */
 class DelayedTaskScheduler(
         private val clock: Clock,

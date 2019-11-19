@@ -199,12 +199,12 @@ The storage strategy is an important detail for the efficiency of the background
 messages which are scheduled for earliest processing rather than having to poll every message to determine readiness.
 Moreover, delivering the most ready tasks first is always guaranteed.
 
-This solution proposes the use of the delay and schedule feature of ActiveMQ to schedule invoice billing for execution
+The favoured solution proposes use of a delay and schedule feature of ActiveMQ to schedule invoice billing for execution
 at a later time. Scheduling can happen way in advance of the target billing date e.g. on daily, on invoice creation etc.
 
-The choice of ActiveMQ over Redis in spite of both having sorted persistence of delayed and scheduled messages is the
-fact that ActiveMQ is a dedicated MOM optimized for reading messages, one at a time, with queue deadlock management 
-guaranteeing an at most once delivery; very desirable in a system involving payments. 
+The choice of ActiveMQ over Redis (and any other MOM) in spite of Redis also having sorted persistence of delayed and 
+scheduled messages is the fact that ActiveMQ is a dedicated MOM optimized for reading messages, one at a time, with 
+queue deadlock management guaranteeing an at most once delivery; very desirable in a system involving payments. 
 With Redis, deadlock management and at most once delivery guarantees would have to be handled by the application.
 
 Below is a sequence diagram representing the flow:
@@ -227,9 +227,9 @@ customer.
 As a start, and since ActiveMQ scheduled queue is persistent, scheduling of invoices is triggered by a cron running at 
 an appropriate interval (hourly, daily) that retrieves invoices that are outstanding but not scheduled 
 (those in the `InvoiceStatus.PENDING`) and running the `Scheduler` delegated from the `BillingService` on them. 
-While still not ideal, it's a better divide and conquer alternative that incrementally schedules any new invoices at the
-established intervals. Using the [Quartz Scheduler](http://www.quartz-scheduler.org) comes in handy as it guarantees 
-that this cron runs only once at a time. Being clustered enhances failure tolerance.
+While still not ideal, it's a better divide and conquer alternative that incrementally schedules billing of any new 
+invoices to a delayed task queue at the established intervals. Using the [Quartz Scheduler](http://www.quartz-scheduler.org) 
+comes in handy as it guarantees that this cron runs only once at a time. Being clustered enhances failure tolerance.
 
 A more robust strategy is an event-driven approach where upon creation of an `Invoice`, a domain event is broadcast
 to all interested and subscribed "parties" (such as a billing service) who in turn react to it. An event is a message to

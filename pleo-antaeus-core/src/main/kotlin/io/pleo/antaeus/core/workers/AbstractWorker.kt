@@ -3,6 +3,7 @@ package io.pleo.antaeus.core.workers
 import io.pleo.antaeus.core.infrastructure.dto.AbstractWorkerTaskDTO
 import io.pleo.antaeus.core.infrastructure.messaging.jms.MessagingMessageListener
 import io.pleo.antaeus.core.infrastructure.util.json.JsonSerializationHelper
+import io.pleo.antaeus.core.infrastructure.util.json.exceptions.JsonSerializationException
 import java.lang.Exception
 import javax.jms.Message
 import javax.jms.TextMessage
@@ -31,6 +32,7 @@ abstract class AbstractWorker<WorkerDTO: AbstractWorkerTaskDTO>(
         }
     }
 
+    @Throws(JsonSerializationException::class)
     private fun messageUnmarshaller(message: String): Any {
         return JsonSerializationHelper.deserializeFromJson(message, workerDTOClass)
     }
