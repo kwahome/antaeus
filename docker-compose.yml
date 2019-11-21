@@ -1,0 +1,28 @@
+version: "3.6"
+services:
+  app:
+    build:
+      context: .
+      target: "${DOCKER_STAGE}"
+    volumes:
+      - ./:/anteus
+      - pleo-antaeus-build-cache:/root/.gradle
+    env_file:
+      - compose.env
+    ports:
+      - 7000:7000
+
+  activemq:
+    image: webcenter/activemq:latest
+    environment:
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+      - ACTIVEMQ_JMX_LOGIN=admin
+      - ACTIVEMQ_JMX_PASSWORD=admin
+      - ACTIVEMQ_CONFIG_SCHEDULERENABLED=true
+    ports:
+      - 61616:61616
+      - 8161:8161
+
+volumes:
+  pleo-antaeus-build-cache:
