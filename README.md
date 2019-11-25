@@ -23,42 +23,42 @@ To solve the problem of scheduling payments of invoices on the first of the mont
 The RFC takes an in-depth look at the problem and the requirements arising from it, weighs competing solutions 
 against each other and recommends the most appropriate.
  
-The intention of in starting out with an RFC is to document architectural and decisions, the process of making them as
+The intention of starting out with an RFC is to document architectural and design decisions, the process of making them as
 well as allowing for peer review and communication of such decisions.
 
-The RFC establishes a criteria, derived from desired properties, in weighing computing solutions as follows:
+The RFC establishes a criteria, derived from desired properties, applicable in weighing computing solutions as follows:
 
 > A robust payment scheduling mechanism is thus needed. The mechanism should (among other properties):
 
-> - be horizontally scalable (distributable - ability to run on different machines
+> - be horizontally scalable (distributable) - ability to run on different machines
 > - guarantee at most once delivery - we only want to charge an invoice once
 > - guarantee durability and recoverability - we want the schedules to persist even after the application or its host 
-> are restarted
+> are restarted or die from faults in the data centers
 > - be dynamically configurable with granularity and little code changes - we want control (preferably user input driven) 
 to change when and how billing is scheduled e.g. we may want to bill every day or every week e.t.c. Level of granularity
 is also rather important e.g. a customer may prefer to pay on a daily basis while another prefers monthly
 > - perform pre-execution checks - for extra precaution, we want to determine whether to proceed with the call to the 
 payment provider based on predetermined rules e.g. `Invoice.Status` not being `PAID`. Configurability here is also
 a consideration.
-> - support rescheduling - since failure is a reality in the world of systems, we want the ability to safely retry 
->without any unwanted side effects
+> - support rescheduling - since failure is a reality in the world of systems, especially when they become distributed,
+we want the ability to safely retry without any unwanted side effects
 > - be extensible - we want the solution to be easily extended to fit future requirements
 > - be efficient and performant - as we work hard to grow the business, so does the number of customers and invoices to 
-> be billed; scale. The solution should withstand increase in scale with a low resource footprint so as not to starve 
-> the application
+> be billed; i.e scale. The solution should withstand increase in scale with a low resource footprint so as not to starve 
+> the application or increase costs
 > - be observable - we want the ability to peek into it and understand it's working for easy troubleshooting
 
 From this analytical process, `Solution 2: Time-based delay queue scheduling` is determined to be most appropriate.
 
 ### 2. Design
-The favoured solution proposes use of a delay and schedule feature of ActiveMQ to schedule invoice billing for execution
-at a later time. Scheduling can happen way in advance of the target billing date e.g. on daily, on invoice creation etc.
+The favoured solution proposes use of a delay and schedule feature of `ActiveMQ` to schedule invoice billing for execution
+at a later time. Scheduling can happen way in advance of the target billing date e.g. daily, on invoice creation etc.
 Once the delay has expired, a scheduled billing task becomes ready and is made visible to a pool of consumers (workers)
 listening on the task queue. The broker delivers the message to only one consumer, waiting for ACKs before it purges it
 or reassigns.
 
-The choice of ActiveMQ over Redis (and any other MOM) in spite of Redis also having sorted persistence of delayed and 
-scheduled messages is the fact that ActiveMQ is a dedicated MOM optimized for reading messages, one at a time, with 
+The choice of ActiveMQ over Redis (and many other MOMs), in spite of Redis also having sorted persistence of delayed and 
+scheduled messages, is the fact that ActiveMQ is a dedicated MOM optimized for reading messages, one at a time, with 
 queue deadlock management guaranteeing an at most once delivery; very desirable in a system involving payments. 
 With Redis, deadlock management and at most once delivery guarantees would have to be handled by the application.
 
@@ -113,8 +113,9 @@ Each invoice could also have a schedule configuration of it's own differing from
 to the same customer.
 
 #### **DelayedTaskScheduler**
-This is a concrete implementation of `TaskScheduler` based on delayed schedule queueing. It applies a supplied 
-`Schedule` to generate a delay for use while sending a task to a delayed queue which is delegated to a `JmsProvider`.
+This is a concrete implementation of `TaskScheduler` based on delayed schedule queueing. It applies configuration from a
+supplied `Schedule` to generate a delay used while sending a task to a delayed queue which is delegated to a 
+`JmsProvider`.
 
 It handles such nuances as applying time zones to derive precision closer to the locale of the customer. 
 For instance, if we have customers in a GMT+0300 timezone and the desired billing time is the first of every month 
@@ -242,8 +243,9 @@ An example `GET /rest/v1/invoices` response with this message structure would be
             "id": 1,
             "customerId": 1,
             "amount": {
-                "value": 393.89,
-                "currency": "DKK"
+                "value": 39389,
+                "currency": "DKK",
+                "precision": 2
             },
             "status": "PAID"
         },
@@ -251,8 +253,9 @@ An example `GET /rest/v1/invoices` response with this message structure would be
             "id": 2,
             "customerId": 1,
             "amount": {
-                "value": 93.35,
-                "currency": "DKK"
+                "value": 9335,
+                "currency": "DKK",
+                "precision": 2
             },
             "status": "SCHEDULED"
         },
@@ -260,8 +263,9 @@ An example `GET /rest/v1/invoices` response with this message structure would be
             "id": 3,
             "customerId": 1,
             "amount": {
-                "value": 301.15,
-                "currency": "DKK"
+                "value": 30115,
+                "currency": "DKK",
+                "precision": 2
             },
             "status": "PENDING"
         }
